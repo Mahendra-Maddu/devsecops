@@ -16,4 +16,22 @@ pipeline {
                          }
 			}
   }
+      stage('Build'){
+            steps {
+                  withDockerRegistery([credentialsId: "dockerlogin",url: ""]) {
+                        script{
+                              app = docker.build("asg")
+                        }
+                  }
+            }
+      }
+      stage('Push'){
+            steps {
+                  script {
+                        docker.withRegistery('AWS ECR URL','ecr:us-west-2:aws-credentials'){
+                              app.push("latest")
+                        }
+                  }
+            }
+      }
 }
